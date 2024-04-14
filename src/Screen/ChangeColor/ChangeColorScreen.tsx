@@ -121,7 +121,7 @@ const ChangeColorScreen = () => {
       colorState.value === Theme.Dark ? 'dark-content' : 'light-content',
     );
 
-    await wait(10);
+    await wait(100);
     const ov2 = await makeImageFromView(ref);
     setOverlay2(ov2);
     transition.value = 0;

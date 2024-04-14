@@ -22,6 +22,8 @@ import {screen} from '../../Util';
 
 const Data = [...Array(24).keys()];
 
+const HEIGHT = 400;
+
 export const transformSin = (value: number) => {
   // sin from -1 to 1 -> 0 to 1
   'worklet';
@@ -85,43 +87,57 @@ const ScrollWheelScreen = () => {
       style={{
         alignItems: undefined,
       }}>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <GestureDetector gesture={pan}>
-          <Animated.View
-            style={{
-              flex: 1,
-              alignItems: 'center',
-              marginLeft: 10,
-              marginRight: 10,
-              marginTop: 100,
-            }}>
-            {Data.map((item, index) => {
-              return (
-                <Item
-                  key={index}
-                  item={`${index + 1}`}
-                  scrollY={scrollY}
-                  index={index}
-                  length={Data.length}
-                />
-              );
-            })}
-            <View
+      <View
+        style={{
+          // backgroundColor: 'blue',
+          // height: 300,
+          flex: 1,
+        }}>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <GestureDetector gesture={pan}>
+            <Animated.View
               style={{
-                position: 'absolute',
-                top: (screen.height - 300) / 2,
-                width: 100,
-                height: 45,
-                // backgroundColor: 'cyan',
-                borderTopColor: 'red',
-                borderTopWidth: 1,
-                borderBottomColor: 'red',
-                borderBottomWidth: 1,
-              }}
-            />
-          </Animated.View>
-        </GestureDetector>
-      </GestureHandlerRootView>
+                // flex: 1,
+                alignItems: 'center',
+                marginLeft: 10,
+                marginRight: 10,
+                marginTop: 100,
+                backgroundColor: 'pink',
+                height: HEIGHT - 4 * 45 + 45,
+                // transform: [
+                //   {
+                //     translateY: -(HEIGHT - 300) / 2,
+                //   },
+                // ],
+              }}>
+              {Data.map((item, index) => {
+                return (
+                  <Item
+                    key={index}
+                    item={`${index + 1}`}
+                    scrollY={scrollY}
+                    index={index}
+                    length={Data.length}
+                  />
+                );
+              })}
+              <View
+                style={{
+                  position: 'absolute',
+                  top: HEIGHT / 2 - 45 * 2,
+                  width: 100,
+                  height: 45,
+                  // backgroundColor: 'cyan',
+                  borderTopColor: 'red',
+                  borderTopWidth: 1,
+                  borderBottomColor: 'red',
+                  borderBottomWidth: 1,
+                }}
+              />
+            </Animated.View>
+          </GestureDetector>
+        </GestureHandlerRootView>
+      </View>
     </ScreenContainer>
   );
 };
@@ -152,25 +168,32 @@ const Item = ({
 
     const sin = Math.sin(translateDeg);
 
-    const translateY = transformSin(sin) * (screen.height - 300);
+    const translateY = transformSin(sin) * HEIGHT;
 
     return {
       position: 'absolute',
       transform: [
         {
-          translateY: translateY,
+          translateY: translateY - 2 * 45,
         },
 
-        // {
-        //   scale:
-        //     isTop(scrollY.value + index * offset) *
-        //     interpolate(transformSin(sin), [0, 0.5, 1], [0, 2, 0]),
-        // },
+        {
+          scale:
+            isTop(scrollY.value + index * offset) *
+            interpolate(transformSin(sin), [0, 0.5, 1], [0.5, 2, 0.5]),
+        },
+        {
+          rotateX: `${interpolate(
+            transformSin(sin),
+            [0.2, 0.8],
+            [-135, 135],
+          )}deg`,
+        },
       ],
-      // opacity:
-      //   isTop(scrollY.value + index * offset) *
-      //   interpolate(transformSin(sin), [0, 0.5, 1], [0, 1, 0]),
-      // zIndex: isTop(scrollY.value + index * offset),
+      opacity:
+        isTop(scrollY.value + index * offset) *
+        interpolate(transformSin(sin), [0.3, 0.5, 0.7], [0, 1, 0]),
+      zIndex: isTop(scrollY.value + index * offset),
     };
   }, [scrollY]);
 
