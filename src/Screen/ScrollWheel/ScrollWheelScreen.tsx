@@ -4,6 +4,7 @@ import {ScrollView, Text, View} from 'react-native';
 import Animated, {
   interpolate,
   interpolateColor,
+  runOnJS,
   SharedValue,
   useAnimatedReaction,
   useAnimatedScrollHandler,
@@ -23,6 +24,7 @@ import {screen} from '../../Util';
 const Data = [...Array(24).keys()];
 
 const HEIGHT = 400;
+const ITEM_HEIGHT = 45;
 
 export const transformSin = (value: number) => {
   // sin from -1 to 1 -> 0 to 1
@@ -60,6 +62,10 @@ const ScrollWheelScreen = () => {
   const scrollY = useSharedValue(0);
   const ctx = useSharedValue(0);
 
+  const onItemChange = (index: number) => {
+    console.log('onItemChange', index);
+  };
+
   const pan = Gesture.Pan()
     .onStart(() => {
       ctx.value = scrollY.value;
@@ -78,6 +84,7 @@ const ScrollWheelScreen = () => {
           scrollY.value = withTiming(nearestIndex * offset, {
             duration: 100,
           });
+          runOnJS(onItemChange)(Math.abs(nearestIndex % Data.length));
         },
       );
     });
@@ -103,12 +110,7 @@ const ScrollWheelScreen = () => {
                 marginRight: 10,
                 marginTop: 100,
                 backgroundColor: 'pink',
-                height: HEIGHT - 4 * 45 + 45,
-                // transform: [
-                //   {
-                //     translateY: -(HEIGHT - 300) / 2,
-                //   },
-                // ],
+                height: HEIGHT - 4 * ITEM_HEIGHT + 45,
               }}>
               {Data.map((item, index) => {
                 return (
@@ -124,9 +126,9 @@ const ScrollWheelScreen = () => {
               <View
                 style={{
                   position: 'absolute',
-                  top: HEIGHT / 2 - 45 * 2,
+                  top: HEIGHT / 2 - ITEM_HEIGHT * 2,
                   width: 100,
-                  height: 45,
+                  height: ITEM_HEIGHT,
                   // backgroundColor: 'cyan',
                   borderTopColor: 'red',
                   borderTopWidth: 1,
@@ -174,7 +176,7 @@ const Item = ({
       position: 'absolute',
       transform: [
         {
-          translateY: translateY - 2 * 45,
+          translateY: translateY - 2 * ITEM_HEIGHT,
         },
 
         {
