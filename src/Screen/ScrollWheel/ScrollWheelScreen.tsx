@@ -58,6 +58,12 @@ const isTop = (value: number) => {
   }
 };
 
+const compactIndex = (index: number, length: number) => {
+  'worklet';
+  // console.log('sign', Math.sign(index));
+  return 12 * (Math.sign(index) + 1) - (index % length);
+};
+
 const ScrollWheelScreen = () => {
   const scrollY = useSharedValue(0);
   const ctx = useSharedValue(0);
@@ -84,7 +90,7 @@ const ScrollWheelScreen = () => {
           scrollY.value = withTiming(nearestIndex * offset, {
             duration: 100,
           });
-          runOnJS(onItemChange)(Math.abs(nearestIndex % Data.length));
+          runOnJS(onItemChange)(compactIndex(nearestIndex, Data.length));
         },
       );
     });
